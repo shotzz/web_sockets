@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Stock Updates</title>
+    <script type="text/javascript" src="node_modules/chart.js/dist/Chart.bundle.js"></script>
+    <script src="http://www.chartjs.org/samples/latest/utils.js"></script>
+    <style type="text/css">/* Chart.js */
+    @-webkit-keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}@keyframes chartjs-render-animation{from{opacity:0.99}to{opacity:1}}.chartjs-render-monitor{-webkit-animation:chartjs-render-animation 0.001s;animation:chartjs-render-animation 0.001s;}</style>
     <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
@@ -14,13 +18,17 @@
     </div>
     <div id="results">
         <div class="row header">
-            <div>Ticker</div>
-            <div>Price</div>
+            <div class="stockName">Ticker</div>
+            <div class="price">Price</div>
             <div id="header-time">Last Updated</div>
-            <div>High</div>
-            <div>Low</div>
+            <div class="high">High</div>
+            <div class="low">Low</div>
         </div>
     </div>
+    <div class="topLink" style="text-align: right;">
+        <a href="javascript: void(0)" id="top" onclick="gotoResults()">Top</a>
+    </div>
+    <canvas id="canvas" style="width: 700px !important; height: 350px !important;" width="700" height="350" class="chartjs-render-monitor"></canvas>
 </div>
 <div class="footer">
     &copy; Media.net

@@ -74,6 +74,10 @@ body {
     display: none;
 }
 
+#wrapper.closed #results {
+    display: block;
+}
+
 .loading {
     display: none;
     padding: 100px 30px;
@@ -93,6 +97,10 @@ body {
     display: flex;
     flex-direction: row;
     transition: background-color 1s linear;
+}
+
+.row:hover {
+    cursor: pointer;
 }
 
 .row:nth-child(even) {
@@ -115,11 +123,11 @@ body {
     font-weight: 600;
 }
 
-.row.priceFall .lastUpdated {
+.row.priceFall .price {
     color: #ff0000;
 }
 
-.row.priceRise .lastUpdated {
+.row.priceRise .price {
     color: #0abe51;
 }
 
@@ -134,6 +142,22 @@ body {
     right: 0;
     text-align: center;
     z-index: 0;
+}
+
+#canvas {
+    margin: auto;
+    max-height: 350px !important;
+    max-width: 700px !important;
+}
+
+.topLink {
+    padding: 10px 50px;
+    text-align: right;
+}
+
+.topLink a {
+    color: #ffffff;
+    text-decoration: none;
 }
 
 @media only screen and (max-width: 600px) {

@@ -59,7 +59,7 @@ function renderStocks(wsMsg) {
 
         var stockElement = document.getElementById(name);
         updateStockObj(stockData, stockObj[name] || {});
-        updateRow(stockElement, stockObj[name])
+        updateRow(stockElement, stockObj[name]);
     });
 
     function getNewRow(id, sortVal) {
@@ -68,6 +68,9 @@ function renderStocks(wsMsg) {
         div.setAttribute("id", id);
         div.setAttribute("class", "row");
         div.setAttribute("data-sort-val", sortVal);
+        div.onclick = function () {
+            populateGraphData(id)
+        };
         return div;
     }
 }
@@ -81,7 +84,8 @@ function updateStockObj(stockData, stock) {
         presentTime = Date.now(),
         time = stock.time || presentTime,
         displayTime = 0,
-        priceChange = PRICE_SAME;
+        priceChange = PRICE_SAME,
+        priceArray = stock.priceArray || [];
 
     if(stock.name) {
         if(max<price) {
@@ -100,6 +104,8 @@ function updateStockObj(stockData, stock) {
         if(time <= presentTime) {
             displayTime = Math.abs(presentTime - time)/1000;
         }
+
+        priceArray.push(price);
     }
 
     stockObj[name] = {
@@ -109,7 +115,8 @@ function updateStockObj(stockData, stock) {
         min: min,
         priceChange: priceChange,
         time: presentTime,
-        displayTime: displayTime
+        displayTime: displayTime,
+        priceArray: priceArray
     };
 }
 
@@ -121,13 +128,13 @@ function updateRow(element, data) {
         min = document.createElement("div");
 
     time.setAttribute("id", data.name + "-time");
-    price.setAttribute("class", "lastUpdated");
+    price.setAttribute("class", "price");
 
     name.innerText = data.name;
-    price.innerText = data.price;
-    time.innerText = Math.round(data.displayTime)==0? "Jus Now" : "Updated " + Math.round(data.displayTime) + " secs ago";
-    max.innerText = data.max;
-    min.innerText = data.min;
+    price.innerText = data.price.toFixed(4);
+    time.innerText = Math.round(data.displayTime)==0? "Jus Now" : Math.round(data.displayTime) + " secs ago";
+    max.innerText = data.max.toFixed(4);
+    min.innerText = data.min.toFixed(4);
 
     element.innerHTML = "";
 
@@ -161,3 +168,79 @@ setInterval(function () {
         }
     });
 }, 60000);
+
+/* Render Charts */
+
+function populateGraphData(stock) {
+    resetCanvas();
+    var colorArray = ["rgb(54, 162, 235)", "rgb(255, 159, 64)", "rgb(255, 99, 132)", "rgb(255, 205, 86)", "rgb(153, 102, 255)", "rgb(201, 203, 207)"];
+    var config = {
+        type: 'line',
+        data: {
+            labels: stockObj[stock].priceArray,
+            datasets: [{
+                label: stockObj[stock].name,
+                backgroundColor: Math.random(colorArray.length-1)*10,
+                borderColor: "#0abe51",
+                data: stockObj[stock].priceArray
+            }]
+        },
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Live Stock update'
+            },
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: false,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Stock'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Price'
+                    }
+                }]
+            }
+        }
+    };
+
+    renderLines(config);
+}
+
+function renderLines(config) {
+    var ctx = document.getElementById('canvas').getContext('2d');
+    window.myLine = new Chart(ctx, config);
+};
+
+function resetCanvas() {
+    var wrapper = document.getElementById("wrapper");
+    var canvas = document.createElement("canvas");
+    canvas.setAttribute("id", "canvas");
+    canvas.setAttribute("class", "chartjs-render-monitor");
+    canvas.setAttribute("height", "350");
+    canvas.setAttribute("width", "700");
+
+    document.getElementById("canvas").remove();
+    wrapper.appendChild(canvas);
+    canvas.scrollIntoView();
+}
+
+function gotoResults() {
+    var results = document.getElementById("results");
+    results.scrollIntoView();
+
+}
