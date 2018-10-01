@@ -240,7 +240,7 @@ function resetCanvas() {
 }
 
 function gotoResults() {
-    var results = document.getElementById("results");
+    var results = document.getElementById("wrapper");
     results.scrollIntoView();
 
 }
